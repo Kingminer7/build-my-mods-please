@@ -1,6 +1,19 @@
 name: Build Geode Mod
 
 on:
+  workflow_dispatch:
+    inputs:
+      mods:
+        description: 'What to build'
+        type: string
+      build_type:
+        description: 'Build Type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - release
+          - debug
   push:
 
 jobs:
@@ -8,14 +21,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        repo:
-          - rewards-in-pause
-          - audiooffsetcalculator
-          - cosmic-clones
-          - soggybasement
-          - icon-search
-          - platformerjoystick
-          - gdps-hub-mod
+        config:
+          - repo: audiooffsetcalculator
+            sn: aoc
+          - repo: cosmic-clones
+            sn: cc
+          - repo: soggybasement
+            sn: sb
+          - repo: icon-search
+            sn: is
+          - repo: platformerjoystick
+            sn: pj
+          - repo: gdps-hub-mod
+            sn: gh
         target:
           - win
           - macm1
@@ -24,21 +42,26 @@ jobs:
           - android32
           - android64
 
-    name: Build ${{ matrix.target }} (${{ matrix.repo }})
+    name: Build ${{ matrix.target }} (${{ matrix.config.repo }})
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out the mod
-        run: git clone https://codeberg.org/km7dev/${{ matrix.repo}}
+        if: >
+          github.event_name == 'push' && (contains(github.event.head_commit.message, 'all') || contains(github.event.head_commit.message, matrix.config.sn)) ||
+          contains(inputs.mods, 'all') || contains(inputs.mods, matrix.config.sn)
+        run: git clone https://codeberg.org/km7dev/${{ matrix.config.repo}}
 
       - uses: kingminer7/build-geode-mod-docker@main
+        if: >
+          github.event_name == 'push' && (contains(github.event.head_commit.message, 'all') || contains(github.event.head_commit.message, matrix.config.sn)) ||
+          contains(inputs.mods, 'all') || contains(inputs.mods, matrix.config.sn)
         with:
           target: ${{ matrix.target }}
           build-config: ${{ matrix.target == 'win' && 'RelWithDebInfo' || 'Debug' }}
           export-debug: true
           upload: true
-          upload-suffix: ${{matrix.repo}}-
-          path: ${{ matrix.repo }}
+          upload-suffix: ${{matrix.config.repo}}-
+          path: ${{ matrix.config.repo }}
 
   merge:
     name: Merge
@@ -47,12 +70,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        repo:
-          - rewards-in-pause
-          - audiooffsetcalculator
+        config:
+          - repo: audiooffsetcalculator
+            sn: aoc
+          - repo: cosmic-clones
+            sn: cc
+          - repo: soggybasement
+            sn: sb
+          - repo: icon-search
+            sn: is
+          - repo: platformerjoystick
+            sn: pj
+          - repo: gdps-hub-mod
+            sn: gh
     steps:
       - uses: kingminer7/build-geode-mod-docker/merge@main
+        if: >
+          github.event_name == 'push' && (contains(github.event.head_commit.message, 'all') || contains(github.event.head_commit.message, matrix.config.sn)) ||
+          contains(inputs.mods, 'all') || contains(inputs.mods, matrix.config.sn)
         with:
           upload: true
-          upload-suffix: ${{matrix.repo}}-
-          output-name: ${{matrix.repo}}
+          upload-suffix: ${{matrix.config.repo}}-
+          output-name: ${{matrix.config.repo}}
