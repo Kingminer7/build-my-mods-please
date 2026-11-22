@@ -32,7 +32,7 @@ jobs:
           build-config: ${{ matrix.target == 'win' && 'RelWithDebInfo' || 'Debug' }}
           export-debug: true
           upload: true
-          upload-suffix: ${{matrix.repo}}
+          upload-suffix: ${{matrix.repo}}-
           path: ${{ matrix.repo }}
 
   merge:
@@ -44,8 +44,9 @@ jobs:
       matrix:
         repo:
           - rewards-in-pause
+          - audiooffsetcalculator
     steps:
       - uses: kingminer7/build-geode-mod-docker/merge@main
         with:
           upload: true
-          upload-suffix: ${{matrix.repo}}
+          upload-suffix: ${{matrix.repo}}-
