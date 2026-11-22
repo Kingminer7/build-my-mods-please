@@ -83,6 +83,8 @@ jobs:
             sn: pj
           - repo: gdps-hub-mod
             sn: gh
+          - repo: rewards-in-pause
+            sn: pr
     steps:
       - uses: kingminer7/build-geode-mod-docker/merge@main
         if: >
