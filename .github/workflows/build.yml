@@ -11,11 +11,16 @@ jobs:
         repo:
           - rewards-in-pause
           - audiooffsetcalculator
+          - cosmic-clones
+          - soggybasement
+          - icon-search
+          - platformerjoystick
+          - gdps-hub-mod
         target:
           - win
           - macm1
           - macintel
-          # - ios # Commented out for testing purposes (I don't feel like finding bindings)
+          - ios
           - android32
           - android64
 
