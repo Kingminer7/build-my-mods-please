@@ -34,6 +34,8 @@ jobs:
             sn: pj
           - repo: gdps-hub-mod
             sn: gh
+          - repo: rewards-in-pause
+            sn: pr
         target:
           - win
           - macm1
