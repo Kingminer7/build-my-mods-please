@@ -14,31 +14,37 @@ jobs:
           - win
           - macm1
           - macintel
-          - ios
+          # - ios # Commented out for testing purposes (I don't feel like finding bindings)
           - android32
           - android64
 
-    name: Build ${{ matrix.target }}
+    name: Build ${{ matrix.target }} (${{ matrix.repo }})
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out the mod
         run: git clone https://codeberg.org/km7dev/${{ matrix.repo}}
 
-      - uses: geode-sdk/build-geode-mod-docker@main
+      - uses: kingminer7/build-geode-mod-docker@main
         with:
           target: ${{ matrix.target }}
           build-config: ${{ matrix.target == 'win' && 'RelWithDebInfo' || 'Debug' }}
           export-debug: true
           upload: true
+          upload-suffix: ${{matrix.repo}}
           path: ${{ matrix.repo }}
 
   merge:
     name: Merge
     runs-on: ubuntu-latest
     needs: ['build']
-
+    strategy:
+      fail-fast: false
+      matrix:
+        repo:
+          - rewards-in-pause
     steps:
       - uses: geode-sdk/build-geode-mod-docker/merge@main
         with:
           upload: true
+          upload-suffix: ${{matrix.repo}}
