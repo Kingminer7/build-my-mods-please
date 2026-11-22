@@ -50,3 +50,4 @@ jobs:
         with:
           upload: true
           upload-suffix: ${{matrix.repo}}-
+          output-name: ${{matrix.repo}}
