@@ -9,8 +9,8 @@ jobs:
       fail-fast: false
       matrix:
         repo:
-          - rewards-in-pause
           - cosmic-clones
+          - audiooffsetcalculator
         target:
           - win
           - macm1
